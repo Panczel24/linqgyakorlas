@@ -1,0 +1,5 @@
+Fixed CultureNotFoundException by replacing hu-HU with CultureInfo.InvariantCulture in Program.cs:40-65.
+
+Reason: Only invariant culture is supported in globalization-invariant mode; hu-hu is an invalid culture identifier.
+
+Solution: Use CultureInfo.InvariantCulture for double parsing to avoid CultureNotFoundException.
