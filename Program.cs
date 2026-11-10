@@ -6,8 +6,86 @@ namespace linqgyakorlas
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("LINQ gyakorlás");
+
+
+            Database db = new Database();
+            List<Diak> diakok = db.DiakokBetoltese();
+            foreach (Diak diak in diakok)
+            {
+                Console.WriteLine(diak.Nev);
+            }
+
+            //osztályátlag az egyes osztályokban
+            var eredmeny = diakok
+                .GroupBy(d => d.Osztaly)
+                .Select(csoport => new
+                {
+                    Osztaly = csoport.Key,
+                    Atlag = csoport.Average(d => d.Atlag)
+                });
+            foreach (var adat in eredmeny)
+            {
+                Console.WriteLine($"{adat.Osztaly} - {adat.Atlag:F2}");
+            }
+
+
+            //csökkenő sorrend
+            var csokkeno = diakok
+              .GroupBy(d => d.Osztaly)
+              .Select(csoport => new
+              {
+                  Osztaly = csoport.Key,
+                  Atlag = csoport.Average(d => d.Atlag)
+              })
+              .OrderByDescending(adat => adat.Atlag);
+
+            foreach (var adat in csokkeno)
+            {
+                Console.WriteLine($"{adat.Osztaly} - {adat.Atlag:F2}");
+            }
+
+
+            //legjobb tanuló és átlaga
+            var legjobb = diakok
+                .GroupBy(d => d.Osztaly)
+                .Select(csoport =>
+                {
+                    double legjobbatlag = csoport.Max(d => d.Atlag);
+                    return csoport
+                        .Where(d => d.Atlag == legjobbatlag)
+                        .Select(d => new
+                        {
+                            d.Osztaly,
+                            d.Nev,
+                            d.Atlag
+                        });
+                });
+            foreach (var diak in legjobb)
+            {
+                foreach (var adat in diak)
+                {
+                Console.WriteLine($"{adat.Osztaly} - {adat.Nev} - {adat.Atlag} ");
+
+                }
+            }
+
+
+            //hány adott korú ember
+            var eletkor = diakok
+                .GroupBy(d => d.Eletkor)
+                .Select(csoport => new
+                {
+                    Eletkor = csoport.Key,
+                    Letszam = csoport.Count()
+                });
+            foreach (var adat in eletkor)
+            {
+                Console.WriteLine($"{adat.Eletkor} éves: {adat.Letszam} fő");
+            }
+
+
             /*
+            Console.WriteLine("LINQ gyakorlás");
             List<int> szamok = new List<int>() { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 14, 16, 20 };
             //List<int> eredmeny = new List<int>() ;
 
@@ -42,7 +120,6 @@ namespace linqgyakorlas
             {
                 Console.WriteLine(szam);
             }
-            */
 
             List<Diak> diakok = File.ReadAllLines("diakok.csv")
                 .Skip(1)
@@ -216,7 +293,8 @@ namespace linqgyakorlas
             }
 
             Console.WriteLine("----------------------");
-        
+                    */
+
 
         }
     }
